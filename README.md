@@ -26,6 +26,6 @@ For help getting started with Flutter, view our online
 
 ![home](https://github.com/Yonkers/flutter_wan_android/blob/master/imgs/favor.png?raw=true)
 
-![detail](https://github.com/Yonkers/flutter_wan_android/blob/master/imgs/detail.png?raw=true)
+![detail](https://github.com/Yonkers/flutter_wan_android/blob/master/imgs/detail.webp?raw=true)
 
 
