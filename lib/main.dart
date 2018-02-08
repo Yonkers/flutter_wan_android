@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
-import 'package:flutter/services.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
-import 'post_detail.dart';
 import 'feed_list.dart';
 import 'type_list.dart';
 import 'drawer.dart';
 import 'login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:async';
-import 'dart:convert';
 import 'collect_list.dart';
 import 'search_page.dart';
+import 'presenter/feeds_presenter.dart';
+import 'adapter/feed_item_adapter.dart';
 
 void main() => runApp(new MyApp());
 
@@ -29,7 +26,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'Flutter Demo',
+      title: 'WanAndroid',
       theme: new ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -87,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   Widget _buildStack() {
     final List<Widget> transitions = <Widget>[];
-    transitions.add(new FeedListPage(LIST_TYPE_FEEDS));
+    transitions.add(new FeedListPage(new FeedsPresenter(), new FeedItemAdapter()));
     transitions.add(new SearchPage());
     transitions.add(new TypeListPage());
     return new IndexedStack(children: transitions, index: _currentIndex,);

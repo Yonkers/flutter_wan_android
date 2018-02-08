@@ -4,6 +4,10 @@ import 'package:flutter/services.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'dart:math';
+import 'post_detail.dart';
+import 'feed_list.dart';
+import 'presenter/search_presenter.dart';
+import 'adapter/feed_item_adapter.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -26,14 +30,17 @@ class _SearchState extends State<SearchPage> {
     List<Widget> columns = <Widget>[
       new TextField(
         autofocus: false,
+        maxLines: 1,
         decoration: new InputDecoration(
             prefixIcon: const Icon(Icons.search),
             hintText: '搜索关键词',
             hintStyle: const TextStyle(color: Colors.blueGrey),
             border: const OutlineInputBorder(),
             contentPadding: const EdgeInsets.all(16.0),
-          suffixIcon: new IconButton(icon: const Icon(Icons.close), onPressed: (){})
+          suffixIcon: new IconButton(icon: const Icon(Icons.arrow_right), onPressed: (){}),
+
         ),
+
       )
     ];
     if (null != hotWords && hotWords.length > 0) {
@@ -46,10 +53,17 @@ class _SearchState extends State<SearchPage> {
         runSpacing: 16.0,
         alignment: WrapAlignment.center,
         children: hotWords.map((Map<String, dynamic> word) {
-          return new Container(
-            child: new Text(word['name'], style: new TextStyle(color: Colors.white, fontSize: 18.0),),
-            padding: const EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 5.0),
-            color: colors[random.nextInt(colors.length)],
+          return new InkWell(
+            child: new Container(
+              child: new Text(word['name'], style: new TextStyle(color: Colors.white, fontSize: 18.0),),
+              padding: const EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 5.0),
+              color: colors[random.nextInt(colors.length)],
+            ),
+            onTap: (){
+              Navigator.push(this.context, new MaterialPageRoute(builder: (BuildContext context){
+                return new FeedListPage(new SearchPresenter(), new FeedItemAdapter(), postParam: {'k':word['name']},);
+              }));
+            },
           );
         }).toList(),
       );

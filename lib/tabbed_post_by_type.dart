@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'feed_list.dart';
+import 'presenter/sub_types_presenter.dart';
+import 'adapter/feed_item_adapter.dart';
 
 class TabbedPostListPage extends StatefulWidget{
   final Map<String,dynamic> typeItem;
@@ -36,7 +38,7 @@ class _TabbedPostListState extends State<TabbedPostListPage>{
             ),
             body: new TabBarView(
               children: types.map((Map<String,dynamic> t){
-                return new FeedListPage(LIST_TYPE_FEEDS, apiUrl: "http://www.wanandroid.com/article/list/0/json?cid=${t['id']}");
+                return new FeedListPage(new TypeFeedsPresenter(), new FeedItemAdapter(), query: t['id'],);
               }).toList(),
             ),
           )),

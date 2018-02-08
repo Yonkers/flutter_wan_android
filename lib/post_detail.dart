@@ -6,6 +6,8 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:flutter/services.dart';
 import 'cache.dart';
 import 'dart:convert';
+import 'presenter/collect_post_presenter.dart';
+import 'presenter/response_data.dart';
 
 class PostDetailPage extends StatefulWidget {
   final Map<String, dynamic> post;
@@ -16,82 +18,10 @@ class PostDetailPage extends StatefulWidget {
   State<StatefulWidget> createState() => new _PostDetailWebViewState();
 }
 
-class _PostDetailState extends State<PostDetailPage> {
-
-  String _redirectedToUrl;
-  FlutterWebView flutterWebView = new FlutterWebView();
-  bool _isLoading = false;
-
-  @override
-  Widget build(BuildContext context) {
-    Widget leading;
-    if (_isLoading) {
-      leading = new CupertinoActivityIndicator();
-    }
-    var columnItems = <Widget>[
-      new MaterialButton(
-          onPressed: launchWebViewExample, child: new Text("Launch"))
-    ];
-    if (_redirectedToUrl != null) {
-      columnItems.add(new Text("Redirected to $_redirectedToUrl"));
-    }
-    return new Scaffold(
-      appBar: new AppBar(
-        leading: leading,
-        title: new Text(widget.post['title']),
-      ),
-      body: new Column(
-        children: columnItems,
-      ),
-    );
-  }
-
-  void launchWebViewExample() {
-    if (flutterWebView.isLaunched) {
-      return;
-    }
-
-    flutterWebView.launch(this.widget.post['link'],
-        javaScriptEnabled: true,
-        toolbarActions: [
-          new ToolbarAction("Dismiss", 1),
-          new ToolbarAction("Reload", 2)
-        ],
-        barColor: Colors.green,
-        tintColor: Colors.white);
-    flutterWebView.onToolbarAction.listen((identifier) {
-      switch (identifier) {
-        case 1:
-          flutterWebView.dismiss();
-          break;
-        case 2:
-          reload();
-          break;
-      }
-    });
-    flutterWebView.listenForRedirect("mobile://test.com", true);
-
-    flutterWebView.onWebViewDidStartLoading.listen((url) {
-      setState(() => _isLoading = true);
-    });
-    flutterWebView.onWebViewDidLoad.listen((url) {
-      setState(() => _isLoading = false);
-    });
-    flutterWebView.onRedirect.listen((url) {
-      flutterWebView.dismiss();
-      setState(() => _redirectedToUrl = url);
-    });
-  }
-
-  void reload() {
-    flutterWebView.load(
-      "https://google.com",
-    );
-  }
-}
-
 class _PostDetailWebViewState extends State<PostDetailPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
+
+  CollectPostPresenter presenter = new CollectPostPresenter();
 
 // Instance of WebView plugin
   final flutterWebviewPlugin = new FlutterWebviewPlugin();
@@ -112,6 +42,7 @@ class _PostDetailWebViewState extends State<PostDetailPage> {
   }
 
   bool collected = false;
+  bool loading = false;
 
   @override
   initState() {
@@ -164,6 +95,7 @@ class _PostDetailWebViewState extends State<PostDetailPage> {
   @override
   Widget build(BuildContext context) {
     String title = widget.post['title'] == null ? widget.post['name'] : widget.post['title'];
+    var favIcon = loading ? new CupertinoActivityIndicator() : new Icon(collected ? Icons.favorite : Icons.favorite_border,color: Colors.white,);
     return new WebviewScaffold(
       key: _scaffoldKey,
       url: widget.post['link'],
@@ -172,71 +104,39 @@ class _PostDetailWebViewState extends State<PostDetailPage> {
         title: new Text(title),
         actions: <Widget>[
           new FlatButton(onPressed: () {
+            if(loading) return;
             if(collected) removeFavorite(); else addToFavorite();
-          }, child: new Icon(collected ? Icons.favorite : Icons.favorite_border,color: Colors.white,))
+          }, child: favIcon)
         ],
       ),
     );
   }
 
   Future addToFavorite() async {
-    String url = "http://www.wanandroid.com/lg/collect/${this.widget.post['id']}/json";
-    var httpClient = createHttpClient();
-    String login_cookie = await getCookie();
-    var header;
-    if(null != login_cookie){
-      header = {
-        'Cookie':login_cookie,
-      };
-    }
-    var response = await httpClient.post(url, headers: header);
-
-    if (response.statusCode == 200) {
-      var res = JSON.decode(response.body);
-      print(res);
-      if(res['errorCode'] == 0){
-        print("收藏成功");
-        setState((){collected = true;});
-      }else{
-        print("收藏失败");
-      }
-      //showSnack("收藏成功");
-    } else {
-      //showSnack("收藏失败 ErrorCode:${response.statusCode}");
-      print(response.body);
+    setState((){loading = true;});
+    ResponseData data = await presenter.addCollect(query: this.widget.post['id'],);
+    if(data.isSuccess()){
+      print("收藏成功");
+      setState((){collected = true; loading = false;});
+    }else{
+      print("收藏失败");
+      setState((){loading = false;});
     }
   }
 
   Future removeFavorite() async{
-    String url = "http://www.wanandroid.com/lg/uncollect_originId/${this.widget.post['id']}/json";
-    var httpClient = createHttpClient();
-    String login_cookie = await getCookie();
-    var header;
-    if(null != login_cookie){
-      header = {
-        'Cookie':login_cookie,
-      };
-    }
+    setState((){loading = true;});
     String originId = widget.post['origin'];
     if(originId == null || originId.isEmpty) originId = "-1";
-    var response = await httpClient.post(url, headers: header, body: {'originId': originId});
-
-    if (response.statusCode == 200) {
-      var res = JSON.decode(response.body);
-      print(res);
-      if(res['errorCode'] == 0){
-        print("取消收藏成功");
-        setState((){collected = false;});
-      }else{
-        print("取消收藏失败");
-      }
-      //showSnack("收藏成功");
-    } else {
-      //showSnack("收藏失败 ErrorCode:${response.statusCode}");
-      print(response.body);
+    ResponseData data = await presenter.removeCollect(query: this.widget.post['id'], body: {'originId': originId});
+    if(data.isSuccess()){
+      print("取消收藏成功");
+      setState((){collected = false; loading = false;});
+    }else{
+      print("取消收藏失败");
+      setState((){loading = false;});
     }
   }
-
 
 
 }

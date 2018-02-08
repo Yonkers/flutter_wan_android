@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 import 'feed_list.dart';
-
+import 'presenter/collect_post_presenter.dart';
+import 'presenter/collect_website_presenter.dart';
+import 'adapter/website_item_adapter.dart';
+import 'adapter/feed_item_adapter.dart';
 
 class CollectType{
   String name;
-  String api;
   String code;
 
-  CollectType(this.name, this.code, this.api);
+  CollectType(this.name, this.code);
 
 }
 
 class CollectListPage extends StatefulWidget{
 
   final List<CollectType> collectTypes = [
-   new CollectType('收藏文章',"post-collect" ,'http://www.wanandroid.com/lg/collect/list/0/json'),
-   new CollectType('收藏网站', "website-collect", 'http://www.wanandroid.com/lg/collect/usertools/json')
+   new CollectType('收藏文章',"post-collect" ),
+   new CollectType('收藏网站', "website-collect")
   ];
 
   CollectListPage();
@@ -47,7 +49,10 @@ class _CollectListState extends State<CollectListPage>{
             ),
             body: new TabBarView(
               children: widget.collectTypes.map((CollectType t){
-                return new FeedListPage(t.code == "website-collect" ? LIST_TYPE_WEBSITE : LIST_TYPE_FEEDS, apiUrl: t.api);
+                if(t.code == "website-collect"){
+                  return new FeedListPage(new CollectWebsitePresenter(), new WebsiteItemAdapter());
+                }
+                return new FeedListPage(new CollectPostPresenter(), new FeedItemAdapter());
               }).toList(),
             ),
           )),
