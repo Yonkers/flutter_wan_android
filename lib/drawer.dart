@@ -4,18 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'collect_list.dart';
-import 'package:url_launcher/url_launcher.dart';
-
-class LinkTextSpan extends TextSpan {
-
-  LinkTextSpan({ TextStyle style, String url, String text }) : super(
-      style: style,
-      text: text ?? url,
-      recognizer: new TapGestureRecognizer()..onTap = () {
-        launch(url);
-      }
-  );
-}
+import 'text_link_span.dart';
 
 class DrawerSetting extends StatelessWidget {
   final Map userInfo;
@@ -75,14 +64,14 @@ class DrawerSetting extends StatelessWidget {
 
         },),
       new Divider(),
-      new ListTile(leading: new Icon(Icons.info), title: new Text("About Author"), onTap: () {
-
+      new ListTile(leading: new Icon(Icons.person), title: new Text("About Author"), onTap: () {
+        Navigator.of(context).pushNamed("/about/author");
       },),
       new Divider(),
       new AboutListTile(
-        icon: new Icon(Icons.person),
+        icon: new Icon(Icons.info),
         applicationVersion: '2018.02.07.alpha',
-        applicationLegalese: '© 2017 leeoLuo',
+        applicationLegalese: 'author: leeoLuo',
         aboutBoxChildren: <Widget>[
           new Padding(
               padding: const EdgeInsets.all(16.0),

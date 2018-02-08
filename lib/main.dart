@@ -11,6 +11,7 @@ import 'collect_list.dart';
 import 'search_page.dart';
 import 'presenter/feeds_presenter.dart';
 import 'adapter/feed_item_adapter.dart';
+import 'about_author.dart';
 
 void main() => runApp(new MyApp());
 
@@ -18,6 +19,7 @@ Map<String, WidgetBuilder> buildRoutes() {
   return <String,WidgetBuilder>{
     '/login': (BuildContext context) => new LoginPage(),
     '/favorite/list':(BuildContext context) => new CollectListPage(),
+    '/about/author' : (BuildContext context) => new AboutAuthor(),
   };
 }
 
