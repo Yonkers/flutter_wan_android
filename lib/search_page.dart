@@ -61,7 +61,11 @@ class _SearchState extends State<SearchPage> {
             ),
             onTap: (){
               Navigator.push(this.context, new MaterialPageRoute(builder: (BuildContext context){
-                return new FeedListPage(new SearchPresenter(), new FeedItemAdapter(), postParam: {'k':word['name']},);
+                return new Scaffold(
+                  appBar: new AppBar(
+                    title: new Text("search:${word['name']}"),
+                  ),
+                    body: new FeedListPage(new SearchPresenter(), new FeedItemAdapter(), postParam: {'k':word['name']},));
               }));
             },
           );

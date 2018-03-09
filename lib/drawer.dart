@@ -31,7 +31,6 @@ class DrawerSetting extends StatelessWidget {
               new Text(userInfo['username'], style: new TextStyle(fontSize: 18.0),)
             ],
           ),
-          //color: Colors.blue,
         ),
       );
     } else {
@@ -42,7 +41,6 @@ class DrawerSetting extends StatelessWidget {
                 Navigator.of(context).pushNamed("/login");
               },
               child: new Text("登 陆")),
-          //color: Colors.blue,
         ),
       );
     }

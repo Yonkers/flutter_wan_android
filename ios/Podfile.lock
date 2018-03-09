@@ -6,12 +6,15 @@ PODS:
     - Flutter
   - shared_preferences (0.0.1):
     - Flutter
+  - url_launcher (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - Flutter (from `/Users/leeo/Develop/github/flutter/bin/cache/artifacts/engine/ios`)
   - flutter_web_view (from `/Users/leeo/.pub-cache/hosted/pub.flutter-io.cn/flutter_web_view-0.0.2/ios`)
   - flutter_webview_plugin (from `/Users/leeo/.pub-cache/hosted/pub.flutter-io.cn/flutter_webview_plugin-0.1.0+1/ios`)
   - shared_preferences (from `/Users/leeo/.pub-cache/hosted/pub.flutter-io.cn/shared_preferences-0.2.5/ios`)
+  - url_launcher (from `/Users/leeo/.pub-cache/hosted/pub.flutter-io.cn/url_launcher-2.0.1/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
@@ -22,12 +25,15 @@ EXTERNAL SOURCES:
     :path: /Users/leeo/.pub-cache/hosted/pub.flutter-io.cn/flutter_webview_plugin-0.1.0+1/ios
   shared_preferences:
     :path: /Users/leeo/.pub-cache/hosted/pub.flutter-io.cn/shared_preferences-0.2.5/ios
+  url_launcher:
+    :path: /Users/leeo/.pub-cache/hosted/pub.flutter-io.cn/url_launcher-2.0.1/ios
 
 SPEC CHECKSUMS:
-  Flutter: d674e78c937094a75ac71dd77e921e840bea3dbf
+  Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
   flutter_web_view: 95e784768166c40b99e0801adff6ccc798bde237
   flutter_webview_plugin: ed9e8a6a96baf0c867e90e1bce2673913eeac694
   shared_preferences: 1feebfa37bb57264736e16865e7ffae7fc99b523
+  url_launcher: 0067ddb8f10d36786672aa0722a21717dba3a298
 
 PODFILE CHECKSUM: 58e7140e8d177014d15256865f8b852f3a6fa6b4
 

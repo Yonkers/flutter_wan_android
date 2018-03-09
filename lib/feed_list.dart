@@ -11,33 +11,31 @@ class FeedListPage extends StatefulWidget {
   final Map<String, dynamic> postParam;
   final BaseAdapter adapter;
 
-  FeedListPage(this.presenter, this.adapter, {Key key, this.query, this.postParam}) : super(key: key);
+  FeedListPage(this.presenter, this.adapter, {Key key, this.query, this.postParam})
+      : super(key: key);
 
   @override
-  _MyHomePageState createState() => new _MyHomePageState();
+  _FeedListState createState() => new _FeedListState();
 }
 
-class _MyHomePageState extends State<FeedListPage> {
+class _FeedListState extends State<FeedListPage> {
 
   var _curPage = 0;
 
-  List<Map<String, dynamic>> pageData;
-  String _errorMsg;
+  Future<List<Map<String, dynamic>>> _dataFuture;
 
-  Future loadFeeds() async{
-    ResponseData responseData =  await widget.presenter.fetch(page: _curPage, query: widget.query, body: this.widget.postParam);
-    if(responseData.isSuccess()){
-      if((responseData.data is List)){ //兼容收藏列表，网站列表
-        pageData = responseData.data;
-      }else {
-        pageData = responseData.data['datas'];
+  Future<List<Map<String, dynamic>>> loadFeeds() async {
+    ResponseData responseData = await widget.presenter.fetch(
+        page: _curPage, query: widget.query, body: this.widget.postParam);
+    if (responseData.isSuccess()) {
+      if ((responseData.data is List)) { //兼容收藏列表，网站列表
+        return responseData.data;
+      } else {
+        return responseData.data['datas'];
       }
-      if(pageData.isEmpty)  _errorMsg = "暂无数据";
-    }else{
-      pageData = [];
-      _errorMsg = responseData.errorMsg;
+    } else {
+      throw new Exception(responseData.errorMsg);
     }
-    return pageData;
   }
 
 
@@ -45,30 +43,45 @@ class _MyHomePageState extends State<FeedListPage> {
   void initState() {
     super.initState();
 
-    loadFeeds().then((dynamic data){
-      setState((){
-        //update ui
-      });
-    });
-  }
-
-  Widget getBodyView(){
-    var body;
-    if(pageData == null){
-      body = new Container(child: new Center(child: new CupertinoActivityIndicator(),));
-    }else if(_errorMsg != null){
-      body = new Container(child: new Center(child: new Text(_errorMsg),));
-    }else{
-      List<ListTile> listTiles = pageData.map((Map<String, dynamic> item){
-        return widget.adapter.getItemView(context, item);
-      }).toList();
-      body = new ListView(children: ListTile.divideTiles(context: this.context, tiles: listTiles).toList(),);
-    }
-    return body;
+    _dataFuture = loadFeeds();
   }
 
   @override
   Widget build(BuildContext context) {
-    return  getBodyView();
+    return new FutureBuilder(
+      future: _dataFuture,
+        builder: (BuildContext context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.active:
+              return new Text("active");
+            case ConnectionState.none:
+              return new Center(
+                child: new Text("none"),
+              );
+            case ConnectionState.waiting:
+              return new Center(
+                child: new CupertinoActivityIndicator(),
+              );
+            default:
+              if (snapshot.hasError) {
+                return new Center(
+                  child: new Text('Error: ${snapshot.error}'),
+                );
+              } else {
+                List<Map<String, dynamic>> data = snapshot.data;
+                if(null == data || data.length == 0){
+                  return new Center(
+                    child: new Text('No Data'),
+                  );
+                }
+                List<ListTile> listTiles = data.map((Map<String, dynamic> item) {
+                  return widget.adapter.getItemView(context, item);
+                }).toList();
+                return new ListView(
+                  children: ListTile.divideTiles(context: this.context, tiles: listTiles).toList(),
+                );
+              }
+          }
+        });
   }
 }
