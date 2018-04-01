@@ -9,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LoginPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => new LoginState();
-
 }
 
 class LoginState extends State<LoginPage> {
@@ -30,20 +29,17 @@ class LoginState extends State<LoginPage> {
   }
 
   void showSnack(String msg) {
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(content: new Text(msg)));
+    _scaffoldKey.currentState
+        .showSnackBar(new SnackBar(content: new Text(msg)));
   }
 
   String userNameValidator(String username) {
-    if (username
-        .trim()
-        .length == 0) return "请输入用户名";
+    if (username.trim().length == 0) return "请输入用户名";
     return null;
   }
 
   String passwordValidator(String pass) {
-    if (pass
-        .trim()
-        .length == 0) return "请输入密码";
+    if (pass.trim().length == 0) return "请输入密码";
     return null;
   }
 
@@ -55,13 +51,10 @@ class LoginState extends State<LoginPage> {
       form.save();
       print("username $username , password: $password");
       var httpClient = createHttpClient();
-      var response = await httpClient.post("http://www.wanandroid.com/user/login",
-        body: {
-          'username': this.username,
-          'password': this.password
-        },
-        encoding: Encoding.getByName("utf-8")
-      );
+      var response = await httpClient.post(
+          "http://www.wanandroid.com/user/login",
+          body: {'username': this.username, 'password': this.password},
+          encoding: Encoding.getByName("utf-8"));
       print(response.body);
       print(response.headers);
       if (response.statusCode == HttpStatus.OK) {
@@ -100,10 +93,9 @@ class LoginState extends State<LoginPage> {
             labelText: '用户名',
             labelStyle: const TextStyle(fontSize: 16.0),
             hintText: '请输入用户名',
-            hintStyle: const TextStyle(fontSize: 14.0)
-        ),
+            hintStyle: const TextStyle(fontSize: 14.0)),
         validator: passwordValidator,
-        initialValue: 'leeoLuo',
+        initialValue: '',
         maxLines: 1,
         onSaved: (String value) {
           username = value;
@@ -114,11 +106,10 @@ class LoginState extends State<LoginPage> {
             labelText: '密码',
             labelStyle: const TextStyle(fontSize: 16.0),
             hintText: '由数字 - _ 组成的密码',
-            hintStyle: const TextStyle(fontSize: 14.0)
-        ),
+            hintStyle: const TextStyle(fontSize: 14.0)),
         obscureText: true,
         validator: userNameValidator,
-        initialValue: '552355-wan-lee',
+        initialValue: '',
         maxLines: 1,
         onSaved: (String value) {
           password = value;
@@ -131,13 +122,14 @@ class LoginState extends State<LoginPage> {
             new FlatButton(
                 child: const Text('注 册', textScaleFactor: 1.3),
                 textColor: Colors.red.shade300,
-                onPressed: register
-            ),
+                onPressed: register),
             new FlatButton(
-                child: const Text('登 陆', textScaleFactor: 1.3,),
+                child: const Text(
+                  '登 陆',
+                  textScaleFactor: 1.3,
+                ),
                 textColor: Colors.blue.shade600,
-                onPressed: login
-            ),
+                onPressed: login),
           ],
         ),
       ),
@@ -150,14 +142,11 @@ class LoginState extends State<LoginPage> {
           autovalidate: true,
           child: new Padding(
             padding: new EdgeInsets.all(10.0),
-            child: new Column(
-                mainAxisSize: MainAxisSize.min,
-                children: formItems
-            ),
+            child:
+                new Column(mainAxisSize: MainAxisSize.min, children: formItems),
           ),
         ),
       ),
     );
   }
-
 }
