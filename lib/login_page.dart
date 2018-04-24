@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'dart:async';
-import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -50,15 +50,13 @@ class LoginState extends State<LoginPage> {
     } else {
       form.save();
       print("username $username , password: $password");
-      var httpClient = createHttpClient();
-      var response = await httpClient.post(
-          "http://www.wanandroid.com/user/login",
+      var response = await http.post("http://www.wanandroid.com/user/login",
           body: {'username': this.username, 'password': this.password},
           encoding: Encoding.getByName("utf-8"));
       print(response.body);
       print(response.headers);
       if (response.statusCode == HttpStatus.OK) {
-        Map data = JSON.decode(response.body);
+        Map data = json.decode(response.body);
         if (data['errorCode'] != 0) {
           String msg = data['errorMsg'];
           String errMsg = msg == null || msg.trim().isEmpty ? "登陆失败" : msg;
@@ -66,8 +64,8 @@ class LoginState extends State<LoginPage> {
         } else {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           prefs.setString("loginCookie", JSON.encode(data['data']));
-          String set_cookie = response.headers['set-cookie'];
-          prefs.setString("set-cookie", set_cookie);
+          String setCookie = response.headers['set-cookie'];
+          prefs.setString("set-cookie", setCookie);
           Navigator.of(this.context).pop("login");
         }
       } else {

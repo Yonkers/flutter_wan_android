@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_web_view/flutter_web_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:async';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:flutter/services.dart';
-import 'cache.dart';
-import 'dart:convert';
+
 import 'presenter/collect_post_presenter.dart';
 import 'presenter/response_data.dart';
 
@@ -38,7 +35,8 @@ class _PostDetailWebViewState extends State<PostDetailPage> {
   final _history = [];
 
   void showSnack(String msg) {
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(content: new Text(msg)));
+    _scaffoldKey.currentState
+        .showSnackBar(new SnackBar(content: new Text(msg)));
   }
 
   bool collected = false;
@@ -47,7 +45,7 @@ class _PostDetailWebViewState extends State<PostDetailPage> {
   @override
   initState() {
     super.initState();
-    if(null != this.widget.post['collect']){
+    if (null != this.widget.post['collect']) {
       collected = this.widget.post['collect'];
     }
 
@@ -72,12 +70,12 @@ class _PostDetailWebViewState extends State<PostDetailPage> {
 
     _onStateChanged =
         flutterWebviewPlugin.onStateChanged.listen((WebViewStateChanged state) {
-          if (mounted) {
-            setState(() {
-              _history.add("onStateChanged: ${state.type} ${state.url}");
-            });
-          }
+      if (mounted) {
+        setState(() {
+          _history.add("onStateChanged: ${state.type} ${state.url}");
         });
+      }
+    });
   }
 
   @override
@@ -94,8 +92,15 @@ class _PostDetailWebViewState extends State<PostDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    String title = widget.post['title'] == null ? widget.post['name'] : widget.post['title'];
-    var favIcon = loading ? new CupertinoActivityIndicator() : new Icon(collected ? Icons.favorite : Icons.favorite_border,color: Colors.white,);
+    String title = widget.post['title'] == null
+        ? widget.post['name']
+        : widget.post['title'];
+    var favIcon = loading
+        ? new CupertinoActivityIndicator()
+        : new Icon(
+            collected ? Icons.favorite : Icons.favorite_border,
+            color: Colors.white,
+          );
     return new WebviewScaffold(
       key: _scaffoldKey,
       url: widget.post['link'],
@@ -103,40 +108,60 @@ class _PostDetailWebViewState extends State<PostDetailPage> {
       appBar: new AppBar(
         title: new Text(title),
         actions: <Widget>[
-          new FlatButton(onPressed: () {
-            if(loading) return;
-            if(collected) removeFavorite(); else addToFavorite();
-          }, child: favIcon)
+          new FlatButton(
+              onPressed: () {
+                if (loading) return;
+                if (collected)
+                  removeFavorite();
+                else
+                  addToFavorite();
+              },
+              child: favIcon)
         ],
       ),
     );
   }
 
   Future addToFavorite() async {
-    setState((){loading = true;});
-    ResponseData data = await presenter.addCollect(query: this.widget.post['id'],);
-    if(data.isSuccess()){
+    setState(() {
+      loading = true;
+    });
+    ResponseData data = await presenter.addCollect(
+      query: this.widget.post['id'],
+    );
+    if (data.isSuccess()) {
       print("收藏成功");
-      setState((){collected = true; loading = false;});
-    }else{
+      setState(() {
+        collected = true;
+        loading = false;
+      });
+    } else {
       print("收藏失败");
-      setState((){loading = false;});
+      setState(() {
+        loading = false;
+      });
     }
   }
 
-  Future removeFavorite() async{
-    setState((){loading = true;});
+  Future removeFavorite() async {
+    setState(() {
+      loading = true;
+    });
     String originId = widget.post['origin'];
-    if(originId == null || originId.isEmpty) originId = "-1";
-    ResponseData data = await presenter.removeCollect(query: this.widget.post['id'], body: {'originId': originId});
-    if(data.isSuccess()){
+    if (originId == null || originId.isEmpty) originId = "-1";
+    ResponseData data = await presenter.removeCollect(
+        query: this.widget.post['id'], body: {'originId': originId});
+    if (data.isSuccess()) {
       print("取消收藏成功");
-      setState((){collected = false; loading = false;});
-    }else{
+      setState(() {
+        collected = false;
+        loading = false;
+      });
+    } else {
       print("取消收藏失败");
-      setState((){loading = false;});
+      setState(() {
+        loading = false;
+      });
     }
   }
-
-
 }

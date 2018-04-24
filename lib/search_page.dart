@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'dart:convert';
 import 'dart:math';
@@ -12,16 +12,16 @@ import 'adapter/feed_item_adapter.dart';
 class SearchPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => new _SearchState();
-
 }
 
 class _SearchState extends State<SearchPage> {
-
-  List<Map<String, dynamic>> hotWords;
+  List hotWords;
 
   List colors = [
-    Colors.blue, Colors.amber,
-    Colors.green, Colors.pink,
+    Colors.blue,
+    Colors.amber,
+    Colors.green,
+    Colors.pink,
     Colors.cyan
   ];
 
@@ -32,19 +32,21 @@ class _SearchState extends State<SearchPage> {
         autofocus: false,
         maxLines: 1,
         decoration: new InputDecoration(
-            prefixIcon: const Icon(Icons.search),
-            hintText: '搜索关键词',
-            hintStyle: const TextStyle(color: Colors.blueGrey),
-            border: const OutlineInputBorder(),
-            contentPadding: const EdgeInsets.all(16.0),
-          suffixIcon: new IconButton(icon: const Icon(Icons.arrow_right), onPressed: (){}),
-
+          prefixIcon: const Icon(Icons.search),
+          hintText: '搜索关键词',
+          hintStyle: const TextStyle(color: Colors.blueGrey),
+          border: const OutlineInputBorder(),
+          contentPadding: const EdgeInsets.all(16.0),
+          suffixIcon: new IconButton(
+              icon: const Icon(Icons.arrow_right), onPressed: () {}),
         ),
-
       )
     ];
     if (null != hotWords && hotWords.length > 0) {
-      columns.add(new Divider(height: 30.0, color: Colors.transparent,));
+      columns.add(new Divider(
+        height: 30.0,
+        color: Colors.transparent,
+      ));
 
       Random random = new Random(colors.length);
 
@@ -52,20 +54,28 @@ class _SearchState extends State<SearchPage> {
         spacing: 16.0,
         runSpacing: 16.0,
         alignment: WrapAlignment.center,
-        children: hotWords.map((Map<String, dynamic> word) {
+        children: hotWords.map((word) {
           return new InkWell(
             child: new Container(
-              child: new Text(word['name'], style: new TextStyle(color: Colors.white, fontSize: 18.0),),
+              child: new Text(
+                word['name'],
+                style: new TextStyle(color: Colors.white, fontSize: 18.0),
+              ),
               padding: const EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 5.0),
               color: colors[random.nextInt(colors.length)],
             ),
-            onTap: (){
-              Navigator.push(this.context, new MaterialPageRoute(builder: (BuildContext context){
+            onTap: () {
+              Navigator.push(this.context,
+                  new MaterialPageRoute(builder: (BuildContext context) {
                 return new Scaffold(
-                  appBar: new AppBar(
-                    title: new Text("search:${word['name']}"),
-                  ),
-                    body: new FeedListPage(new SearchPresenter(), new FeedItemAdapter(), postParam: {'k':word['name']},));
+                    appBar: new AppBar(
+                      title: new Text("search:${word['name']}"),
+                    ),
+                    body: new FeedListPage(
+                      new SearchPresenter(),
+                      new FeedItemAdapter(),
+                      postParam: {'k': word['name']},
+                    ));
               }));
             },
           );
@@ -75,12 +85,9 @@ class _SearchState extends State<SearchPage> {
       columns.add(hotLayout);
     }
 
-
     return new Container(
       padding: const EdgeInsets.all(5.0),
-      child: new Column(
-          children: columns
-      ),
+      child: new Column(children: columns),
     );
   }
 
@@ -92,18 +99,14 @@ class _SearchState extends State<SearchPage> {
   }
 
   Future loadHotWords() async {
-    var httpClient = createHttpClient();
-    var response = await httpClient.get("http://www.wanandroid.com/hotkey/json");
+    var response = await http.get("http://www.wanandroid.com/hotkey/json");
     if (response.statusCode == HttpStatus.OK) {
-      Map res = JSON.decode(response.body);
-      List<Map<String, dynamic>> list = res['data'];
+      Map res = json.decode(response.body);
+      List list = res['data'];
       if (list == null) list = [];
       setState(() {
         this.hotWords = list;
       });
-    } else {
-
-    }
+    } else {}
   }
-
 }
