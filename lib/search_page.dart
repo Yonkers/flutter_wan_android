@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'dart:convert';
 import 'dart:math';
-import 'post_detail.dart';
 import 'feed_list.dart';
 import 'presenter/search_presenter.dart';
 import 'adapter/feed_item_adapter.dart';

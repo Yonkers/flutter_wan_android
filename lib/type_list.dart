@@ -17,8 +17,6 @@ class TypeListPage extends StatefulWidget {
 
 class _TypeListPageState extends State<TypeListPage>
     with AutomaticKeepAliveClientMixin {
-  var _curPage = 0;
-
   List typeList;
   String _errorMsg;
 

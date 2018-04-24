@@ -63,7 +63,7 @@ class LoginState extends State<LoginPage> {
           showSnack(errMsg);
         } else {
           SharedPreferences prefs = await SharedPreferences.getInstance();
-          prefs.setString("loginCookie", JSON.encode(data['data']));
+          prefs.setString("loginCookie", json.encode(data['data']));
           String setCookie = response.headers['set-cookie'];
           prefs.setString("set-cookie", setCookie);
           Navigator.of(this.context).pop("login");

@@ -1,8 +1,4 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:async';
-import 'dart:convert';
 import 'collect_list.dart';
 import 'text_link_span.dart';
 
@@ -23,12 +19,22 @@ class DrawerSetting extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               new CircleAvatar(
-                child: new Icon(Icons.person, color: Colors.white, size: 40.0,),
+                child: new Icon(
+                  Icons.person,
+                  color: Colors.white,
+                  size: 40.0,
+                ),
                 backgroundColor: Colors.blue,
                 radius: 40.0,
               ),
-              new Divider(height: 20.0, color: Colors.transparent,),
-              new Text(userInfo['username'], style: new TextStyle(fontSize: 18.0),)
+              new Divider(
+                height: 20.0,
+                color: Colors.transparent,
+              ),
+              new Text(
+                userInfo['username'],
+                style: new TextStyle(fontSize: 18.0),
+              )
             ],
           ),
         ),
@@ -46,25 +52,35 @@ class DrawerSetting extends StatelessWidget {
     }
     final ThemeData themeData = Theme.of(context);
     final TextStyle aboutTextStyle = themeData.textTheme.body2;
-    final TextStyle linkStyle = themeData.textTheme.body2.copyWith(color: themeData.accentColor);
+    final TextStyle linkStyle =
+        themeData.textTheme.body2.copyWith(color: themeData.accentColor);
 
     ListView listView = new ListView(children: <Widget>[
       header,
-      new ListTile(leading: new Icon(Icons.favorite), title: new Text("我的收藏"),
+      new ListTile(
+        leading: new Icon(Icons.favorite),
+        title: new Text("我的收藏"),
         onTap: () {
-          Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context){
+          Navigator.push(context,
+              new MaterialPageRoute(builder: (BuildContext context) {
             return new CollectListPage();
           }));
-        },),
+        },
+      ),
       new Divider(),
-      new ListTile(leading: new Icon(Icons.favorite), title: new Text("常用网站"),
+      new ListTile(
+        leading: new Icon(Icons.favorite),
+        title: new Text("常用网站"),
+        onTap: () {},
+      ),
+      new Divider(),
+      new ListTile(
+        leading: new Icon(Icons.person),
+        title: new Text("About Author"),
         onTap: () {
-
-        },),
-      new Divider(),
-      new ListTile(leading: new Icon(Icons.person), title: new Text("About Author"), onTap: () {
-        Navigator.of(context).pushNamed("/about/author");
-      },),
+          Navigator.of(context).pushNamed("/about/author");
+        },
+      ),
       new Divider(),
       new AboutListTile(
         icon: new Icon(Icons.info),
@@ -72,43 +88,27 @@ class DrawerSetting extends StatelessWidget {
         applicationLegalese: 'author: leeoLuo',
         aboutBoxChildren: <Widget>[
           new Padding(
-              padding: const EdgeInsets.all(16.0),
-            child: new RichText(text: new TextSpan(children: <TextSpan>[
+            padding: const EdgeInsets.all(16.0),
+            child: new RichText(
+                text: new TextSpan(children: <TextSpan>[
               new TextSpan(
-                style: aboutTextStyle,
-                  text: '使用Flutter编写，WanAndroid提供api.'
-              ),
-              new TextSpan(
-                  style: aboutTextStyle,
-                  text: '\n\n代码仓库'
-              ),
-              new LinkTextSpan(
-                style: linkStyle,
-                url: 'https://github.com/Yonkers/flutter_wan_android',
-                text: 'flutter_wan_android'
-              ),
-              new TextSpan(
-                  style: aboutTextStyle,
-                  text: '\n\n更多Flutter资料参考'
-              ),
+                  style: aboutTextStyle, text: '使用Flutter编写，WanAndroid提供api.'),
+              new TextSpan(style: aboutTextStyle, text: '\n\n代码仓库'),
               new LinkTextSpan(
                   style: linkStyle,
-                  url: 'https://flutter.io',
+                  url: 'https://github.com/Yonkers/flutter_wan_android',
+                  text: 'flutter_wan_android'),
+              new TextSpan(style: aboutTextStyle, text: '\n\n更多Flutter资料参考'),
+              new LinkTextSpan(
+                style: linkStyle,
+                url: 'https://flutter.io',
               ),
-              new TextSpan(
-                  style: aboutTextStyle,
-                  text: '.'
-              ),
-            ]
-            )
-            ),
+              new TextSpan(style: aboutTextStyle, text: '.'),
+            ])),
           ),
-
         ],
       )
     ]);
     return listView;
   }
-
-
 }
